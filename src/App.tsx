@@ -1,6 +1,6 @@
 import {Routes,Route, Navigate} from "react-router-dom";
 import Login from "./login";
-import Dashboard  from "./pages/dashboard";
+import Dashboard from "./pages/dashboard";
 import Register from "./pages/Register";
 export default function App(){
   const fullname = localStorage.getItem("fullname");
