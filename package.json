@@ -3,11 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main":"server.ts",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+     "start": "node dist/server.js"
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.2",
@@ -37,4 +39,6 @@
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.4"
   }
+  
+  
 }
