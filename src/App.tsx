@@ -7,28 +7,23 @@ export default function App(){
 
 
     return(
-      <Routes>
+     <Routes>
+  <Route
+    path="/"
+    element={fullname ? <Navigate to="/dashboard" /> : <Login />}
+  />
 
-      <Route 
-      path="/"
-      element={fullname ? <Navigate to="/dashboard" /> : <Login />}
-       />
-       
+  <Route
+    path="/Register"
+    element={fullname ? <Navigate to="/dashboard" /> : <Register />}
+  />
 
-      <Route 
-      path="/Register"
-      element={fullname ? <Navigate to="/Register" /> : <Register />}
-       />
-       <Route
-       path="/dashboard"
-       element={fullname ? <Dashboard /> : <Navigate to="/" />}
-        />
+  <Route
+    path="/dashboard"
+    element={fullname ? <Dashboard /> : <Navigate to="/" />}
+  />
+</Routes>
 
-        <Route 
-      path="/"
-      element={fullname ? <Navigate to="/" /> : <Login />}
-       />
-      </Routes>
 
       
     );
