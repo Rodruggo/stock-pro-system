@@ -89,7 +89,8 @@ app.post("/login", async (req, res) => {
 });
 
 // === USER MANAGEMENT ===
-app.get("/user", async (req, res) => {
+// Change (req, res) to (_req, res)
+app.get("/user", async (_req, res) => { 
   try {
     const [rows] = await db.query("SELECT id, email, fullname, role FROM user");
     res.json(rows);
@@ -127,7 +128,8 @@ app.delete("/user/:id", async (req, res) => {
 });
 
 // === PRODUCT CRUD ===
-app.get("/products", async (req, res) => {
+// Change (req, res) to (_req, res)
+app.get("/products", async (_req, res) => {
   try {
     const [rows] = await db.query("SELECT * FROM products");
     res.json(rows);
