@@ -176,6 +176,7 @@ export default function Register() {
             <select name="role" value={form.role} onChange={handleChange} required>
               <option value="">Select a Role</option>
               <option value="user">User (View Only)</option>
+               <option value="admin">Admin (Full Acess)</option>
             </select>
           </div>
 
