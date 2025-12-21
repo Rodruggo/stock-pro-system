@@ -13,6 +13,6 @@
   ],
   "rewrites": [
     { "source": "/server/api/(.*)", "destination": "server.ts" },
-    { "source": "/(.*)", "destination": "/main.tsx" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
