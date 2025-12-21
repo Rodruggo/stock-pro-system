@@ -34,7 +34,7 @@ const db = mysql.createPool({
   ssl: { rejectUnauthorized: false } 
 });
 
-export default db;
+
 
 
 
@@ -223,3 +223,6 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
+export default app;
