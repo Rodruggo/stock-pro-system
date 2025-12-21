@@ -5,10 +5,10 @@ export default function Register() {
   const [form, setForm] = useState({ fullname: "", email: "", password: "", role: "" });
   const [loading, setLoading] = useState(false);
 
-  const api = axios.create({
-    baseURL: "http://localhost:4000",
-    headers: { "Content-Type": "application/json" },
-  });
+ const api = axios.create({
+  baseURL: "/api", // CHANGE TO THIS
+  headers: { "Content-Type": "application/json" },
+});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });

@@ -28,10 +28,10 @@ export default function Dashboard() {
   const fullname = localStorage.getItem("fullname") || "Guest";
   const role = localStorage.getItem("role") || "user";
 
-  const api = axios.create({
-    baseURL: "http://localhost:4000",
-    headers: { "Content-Type": "application/json" },
-  });
+const api = axios.create({
+  baseURL: "/api", // CHANGE TO THIS
+  headers: { "Content-Type": "application/json" },
+});
 
   const fetchData = async () => {
     try {

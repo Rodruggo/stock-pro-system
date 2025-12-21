@@ -11,10 +11,10 @@ export default function Login() {
     // Prevent page refresh on form submission
     if (e) e.preventDefault();
 
-    const api = axios.create({
-      baseURL: "http://localhost:4000",
-      headers: { "Content-Type": "application/json" },
-    });
+const api = axios.create({
+  baseURL: "/api", // CHANGE TO THIS
+  headers: { "Content-Type": "application/json" },
+});
 
     try {
       const { data } = await api.post("/login", { username, password });
