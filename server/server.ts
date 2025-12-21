@@ -5,6 +5,8 @@ import { OAuth2Client } from "google-auth-library";
 
 const app = express();
 
+
+
 /* ======================
    MIDDLEWARE
 ====================== */
@@ -12,7 +14,11 @@ app.use(cors({
   origin: "*", // later you can restrict this to your Vercel domain
 }));
 app.use(express.json());
-
+app.use(cors({
+  origin: "*", // Or put your specific Vercel URL here
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 /* ======================
    DATABASE (ENV BASED)
 ====================== */
@@ -21,7 +27,10 @@ const db = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT) || 3306,
+  // Use Number() to convert the string "12691" to a number 12691
+  port: Number(process.env.DB_PORT), 
+  // MANDATORY for Aiven cloud connection
+  ssl: { rejectUnauthorized: false } 
 });
 
 /* ======================
