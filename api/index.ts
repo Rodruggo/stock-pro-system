@@ -6,7 +6,7 @@ import { OAuth2Client } from "google-auth-library";
 const app = express();
 
 /* ======================
-   MIDDLEWARE
+    MIDDLEWARE
 ====================== */
 app.use(cors({
   origin: "*",
@@ -15,35 +15,35 @@ app.use(cors({
 app.use(express.json());
 
 /* ======================
-   DATABASE (AIVEN)
+    DATABASE (AIVEN)
 ====================== */
 const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT),
-  ssl: { rejectUnauthorized: false },
+  port: Number(process.env.DB_PORT), //
+  ssl: { rejectUnauthorized: false }, //
 });
 
 /* ======================
-   GOOGLE AUTH
+    GOOGLE AUTH
 ====================== */
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 /* ======================
-   HEALTH CHECK
+    HEALTH CHECK
 ====================== */
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
 });
 
 /* ======================
-   GOOGLE LOGIN
+    GOOGLE LOGIN
 ====================== */
 app.post("/api/google-login", async (req, res) => {
   const { token } = req.body;
-
+  
   try {
     const ticket = await client.verifyIdToken({
       idToken: token,
@@ -51,16 +51,10 @@ app.post("/api/google-login", async (req, res) => {
     });
 
     const payload = ticket.getPayload();
-    if (!payload) {
-      return res.status(400).json({ success: false });
-    }
+    if (!payload) return res.status(400).json({ success: false });
 
     const { email, name } = payload;
-
-    const [rows]: any = await db.query(
-      "SELECT * FROM user WHERE email = ?",
-      [email]
-    );
+    const [rows]: any = await db.query("SELECT * FROM user WHERE email = ?", [email]);
 
     if (rows.length > 0) {
       return res.json({
@@ -75,11 +69,7 @@ app.post("/api/google-login", async (req, res) => {
       [name, email, "GOOGLE_AUTH", "user"]
     );
 
-    res.json({
-      success: true,
-      fullname: name,
-      role: "user",
-    });
+    res.json({ success: true, fullname: name, role: "user" });
   } catch (err) {
     console.error(err);
     res.status(400).json({ success: false });
@@ -87,7 +77,7 @@ app.post("/api/google-login", async (req, res) => {
 });
 
 /* ======================
-   LOGIN
+    LOGIN
 ====================== */
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
@@ -104,21 +94,20 @@ app.post("/api/login", async (req, res) => {
         fullname: rows[0].fullname,
         role: rows[0].role,
       });
-    }
 
-    res.json({ success: false });
+    }
+    res.json({ success: false })
+    ;
   } catch {
     res.status(500).json({ success: false });
   }
 });
 
 /* ======================
-   USERS
+    USERS
 ====================== */
 app.get("/api/user", async (_req, res) => {
-  const [rows] = await db.query(
-    "SELECT id, fullname, email, role FROM user"
-  );
+  const [rows] = await db.query("SELECT id, fullname, email, role FROM user");
   res.json(rows);
 });
 
@@ -138,17 +127,13 @@ app.post("/api/user", async (req, res) => {
 
 app.delete("/api/user/:id", async (req, res) => {
   const { id } = req.params;
-
-  if (id === "1") {
-    return res.status(403).json({ success: false });
-  }
-
+  if (id === "1") return res.status(403).json({ success: false });
   await db.query("DELETE FROM user WHERE id=?", [id]);
   res.json({ success: true });
 });
 
 /* ======================
-   PRODUCTS
+    PRODUCTS
 ====================== */
 app.get("/api/products", async (_req, res) => {
   const [rows] = await db.query("SELECT * FROM products");
@@ -186,6 +171,6 @@ app.delete("/api/products/:id", async (req, res) => {
 });
 
 /* ======================
-   EXPORT FOR VERCEL
+    EXPORT FOR VERCEL
 ====================== */
-export default app;
+export default app; //
