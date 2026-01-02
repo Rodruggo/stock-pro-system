@@ -2,28 +2,27 @@ import { useState } from "react";
 import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import axios from "axios";
 
-// This creates a reusable api caller that points to your Vercel /api folder
-const api = axios.create({
-  baseURL: "/api",
-  headers: { "Content-Type": "application/json" },
-});
-
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
+  // FIX: Define API client here so both Logins can use it
+  const api = axios.create({
+    baseURL: "/api", 
+    headers: { "Content-Type": "application/json" },
+  });
+
   const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     try {
-      // Uses the Vercel-friendly relative path
       const { data } = await api.post("/login", { username, password });
       if (data.success) {
         localStorage.setItem("fullname", data.fullname);
         localStorage.setItem("role", data.role);
         window.location.href = "/dashboard";
       } else {
-        setMessage(data.message || "Invalid credentials");
+        setMessage(data.message);
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -41,21 +40,21 @@ export default function Login() {
         setMessage("No Google credentials found");
         return;
       }
-
-      // FIXED: Removed localhost:4000 to work on Vercel
+      
+      // FIX: Use 'api.post' instead of hardcoded localhost
+      // This automatically sends the request to https://your-site.vercel.app/api/google-login
       const res = await api.post("/google-login", {
         token: credentialResponse.credential,
       });
 
       if (res.data.success) {
         localStorage.setItem("fullname", res.data.fullname);
-        localStorage.setItem("role", res.data.role || "user");
+        localStorage.setItem("role", res.data.role || "user"); // Ensure role is saved
         window.location.href = "/dashboard";
       } else {
-        setMessage(res.data.message || "Google login failed");
+        setMessage(res.data.message);
       }
     } catch (err) {
-      console.error("Google Auth error:", err);
       setMessage("Google login failed");
     }
   };
@@ -64,21 +63,108 @@ export default function Login() {
     <GoogleOAuthProvider clientId="745468275919-v46g3runu1kdata3f86n1tthj2rbt67g.apps.googleusercontent.com">
       <div className="login-page">
         <style>{`
-          .login-page { height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; background: #f4f7fe; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; }
-          .login-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; text-align: center; }
-          .login-card h2 { color: #111c44; margin-bottom: 10px; font-weight: 700; }
-          .login-card p.subtitle { color: #a3aed0; margin-bottom: 30px; font-size: 14px; }
-          .input-group { margin-bottom: 15px; text-align: left; }
-          .input-group label { display: block; font-size: 12px; font-weight: bold; color: #111c44; margin-bottom: 5px; margin-left: 4px; }
-          .login-card input { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #e0e5f2; outline: none; transition: 0.3s; }
-          .login-card input:focus { border-color: #4318ff; }
-          .btn-primary { width: 100%; padding: 12px; background: #4318ff; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-          .btn-primary:hover { background: #3311db; }
-          .btn-outline { width: 100%; padding: 10px; background: transparent; color: #4318ff; border: 1px solid #4318ff; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-          .divider { margin: 25px 0; display: flex; align-items: center; color: #a3aed0; font-size: 12px; }
-          .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #e0e5f2; margin: 0 10px; }
-          .google-container { display: flex; justify-content: center; }
-          .error-msg { color: #ee5d50; font-size: 13px; margin-top: 15px; font-weight: 500; }
+          .login-page {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f4f7fe;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+          }
+          .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+          }
+          .login-card h2 {
+            color: #111c44;
+            margin-bottom: 10px;
+            font-weight: 700;
+          }
+          .login-card p.subtitle {
+            color: #a3aed0;
+            margin-bottom: 30px;
+            font-size: 14px;
+          }
+          .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+          }
+          .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: #111c44;
+            margin-bottom: 5px;
+            margin-left: 4px;
+          }
+          .login-card input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e0e5f2;
+            outline: none;
+            transition: 0.3s;
+          }
+          .login-card input:focus {
+            border-color: #4318ff;
+          }
+          .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: #4318ff;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+          }
+          .btn-primary:hover {
+            background: #3311db;
+          }
+          .btn-outline {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            color: #4318ff;
+            border: 1px solid #4318ff;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+          }
+          .divider {
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            color: #a3aed0;
+            font-size: 12px;
+          }
+          .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e0e5f2;
+            margin: 0 10px;
+          }
+          .google-container {
+            display: flex;
+            justify-content: center;
+          }
+          .error-msg {
+            color: #ee5d50;
+            font-size: 13px;
+            margin-top: 15px;
+            font-weight: 500;
+          }
         `}</style>
 
         <div className="login-card">
