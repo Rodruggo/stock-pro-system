@@ -16,18 +16,18 @@ const db = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT),
-  ssl: { rejectUnauthorized: false },
+  port: Number(process.env.DB_PORT), //
+  ssl: { rejectUnauthorized: false }, //
 });
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// HEALTH CHECK
+// HEALTH CHECK (Now at /api/health)
 app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });
 
-// GOOGLE LOGIN (Fixed: Ready for Vercel)
+// GOOGLE LOGIN (Now at /api/google-login)
 app.post("/google-login", async (req, res) => {
   const { token } = req.body;
   try {
@@ -62,7 +62,7 @@ app.post("/google-login", async (req, res) => {
   }
 });
 
-// LOGIN
+// LOGIN (Now at /api/login)
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -140,4 +140,4 @@ app.delete("/products/:id", async (req, res) => {
   res.json({ success: true });
 });
 
-export default app;
+export default app; //

@@ -7,14 +7,15 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  // FIX: Define API client here so both Logins can use it
-  const api = axios.create({
-    baseURL: "/api", 
-    headers: { "Content-Type": "application/json" },
-  });
-
   const handleLogin = async (e?: React.FormEvent) => {
+    // Prevent page refresh on form submission
     if (e) e.preventDefault();
+
+const api = axios.create({
+  baseURL: "/api", // CHANGE TO THIS
+  headers: { "Content-Type": "application/json" },
+});
+
     try {
       const { data } = await api.post("/login", { username, password });
       if (data.success) {
@@ -40,16 +41,12 @@ export default function Login() {
         setMessage("No Google credentials found");
         return;
       }
-      
-      // FIX: Use 'api.post' instead of hardcoded localhost
-      // This automatically sends the request to https://your-site.vercel.app/api/google-login
-      const res = await api.post("/google-login", {
+      const res = await axios.post("http://localhost:4000/google-login", {
         token: credentialResponse.credential,
       });
 
       if (res.data.success) {
         localStorage.setItem("fullname", res.data.fullname);
-        localStorage.setItem("role", res.data.role || "user"); // Ensure role is saved
         window.location.href = "/dashboard";
       } else {
         setMessage(res.data.message);
@@ -171,6 +168,7 @@ export default function Login() {
           <h2>📦 STOCK PRO</h2>
           <p className="subtitle">Enter your credentials to access the system</p>
 
+          {/* Form wrapper handles the "Enter" key trigger */}
           <form onSubmit={handleLogin}>
             <div className="input-group">
               <label>Username</label>
@@ -197,6 +195,7 @@ export default function Login() {
             <button type="submit" className="btn-primary">Sign In</button>
           </form>
 
+          {/* This button is outside the form to prevent it from triggering login */}
           <button type="button" className="btn-outline" onClick={handleregister}>Create Account</button>
 
           <div className="divider">or continue with Google</div>
@@ -216,6 +215,7 @@ export default function Login() {
     </GoogleOAuthProvider>
   );
 }
+
 
 
 
